@@ -1,0 +1,18 @@
+enable
+conf t
+int gig0/0
+ip add 192.168.1.1 255.255.255.0
+no shut
+exit
+int se0/0/0
+ip add 200.1.1.1 255.255.255.252
+clock rate 64000
+no shut
+exit
+int se0/0/1
+ip add 200.1.1.5 255.255.255.252
+clock rate 64000
+no shut
+exit
+
+

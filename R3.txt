@@ -1,0 +1,10 @@
+enable
+conf t
+int se0/0/1
+ip add 200.1.1.6 255.255.255.252
+no shut
+exit
+ip route 192.168.1.0   255.255.255.0   200.1.1.5
+end
+
+
