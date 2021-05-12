@@ -1,0 +1,83 @@
+
+SW1
+--------------
+enable
+conf t
+interface range Gig 0/1 , Gig 0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+channel-group 1 mode on
+end
+
+SW2
+-----------
+enable
+conf t
+interface range Gig 0/1 , Gig 0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+channel-group 1 mode on
+end
+------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SW1
+--------------
+enable
+conf t
+interface range Gig 0/1 , Gig 0/2
+no switchport
+channel-group 1 mode on
+exit
+interface po1
+ip address 192.168.2.1 255.255.255.0
+no shut
+exit
+interface vlan 1 
+ip address 192.168.1.254 255.255.255.0
+no shut
+exit
+ip routing 
+ip route 192.168.3.0 255.255.255.0 192.168.2.2
+end
+
+SW2
+-----------
+enable
+conf t
+interface range Gig 0/1 , Gig 0/2
+no switchport
+channel-group 1 mode on
+exit
+interface po1
+ip address 192.168.2.2 255.255.255.0
+no shut
+exit
+interface vlan 1 
+ip address 192.168.3.254 255.255.255.0
+no shut
+exit
+ip routing 
+ip route 192.168.1.0 255.255.255.0 192.168.2.1
+end
