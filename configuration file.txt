@@ -1,0 +1,313 @@
+// RSTP Configuration
+-------------------
+ena
+conf t
+spanning-tree mode rapid-pvst
+end
+
+
+// Trunk Ports Configuration
+--------------------
+[SW1]:
+enable
+conf t
+interface range gig 1/0/5 , gig 1/0/6
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+interface range gig 1/0/1 , gig 1/0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk 
+exit
+interface range gig 1/0/3 , gig 1/0/4
+switchport trunk encapsulation dot1q
+switchport mode trunk 
+end
+
+[SW2]:
+enable
+conf t
+interface range gig 1/0/1 , gig 1/0/2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+end
+
+[SW3, SW4]:
+enable
+conf t
+interface range gig 0/1 , gig 0/2
+switchport mode trunk
+end
+
+// VTP Configuration
+--------------
+[SW1]: 
+ena
+conf t
+vtp version 2
+vtp mode server
+vtp domain campusLan
+vtp password campusLan
+end
+
+[SW2, SW3, SW4] :
+ena
+conf t
+vtp version 2
+vtp mode client
+vtp domain campusLan
+vtp password campusLan
+end
+
+// VLAN Configuration
+------------------------
+[SW1]:
+enable
+conf t
+vlan 10
+exit
+vlan 20
+exit
+vlan 30
+exit
+vlan 40
+end
+
+
+// VLAN Membership
+---------------
+[SW2]:
+enable
+conf t
+interface range gig 1/0/3, gig 1/0/4
+switchport mode access
+switchport access vlan 30
+end
+
+[SW3]:
+enable
+conf t
+interface fa0/1
+switchport mode access
+switchport access vlan 10
+switchport voice vlan 40
+exit
+interface fa0/2
+switchport mode access
+switchport access vlan 20
+switchport voice vlan 40
+end
+
+[SW4]:
+enable
+conf t
+interface fa0/1
+switchport mode access
+switchport access vlan 10
+switchport voice vlan 40
+exit
+interface fa0/2
+switchport mode access
+switchport access vlan 20
+switchport voice vlan 40
+end
+
+// Switched Virtual Interface (SVI) Configuration
+---------------------------------------------
+[SW1]:
+enable
+conf t
+interface vlan 1
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shutdown
+exit
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+no shutdown
+exit
+interface vlan 30
+ip address 192.168.30.1 255.255.255.0
+no shutdown
+exit
+interface vlan 40
+ip address 192.168.40.1 255.255.255.0
+no shutdown
+end
+
+[SW2]:
+enable
+conf t
+interface vlan 1
+ip address 192.168.1.2 255.255.255.0
+no shutdown
+end
+
+[SW3]:
+enable
+conf t
+interface vlan 1
+ip address 192.168.1.3 255.255.255.0
+no shutdown
+end
+
+[SW4]:
+enable
+conf t
+interface vlan 1
+ip address 192.168.1.4 255.255.255.0
+no shutdown
+end
+
+
+// DHCP Server Configuration
+----------------------------
+[SW1]
+enable
+conf t
+ip dhcp pool Network1
+network 192.168.1.0 255.255.255.0
+default-router 192.168.1.1
+exit
+ip dhcp pool Network10
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+exit
+ip dhcp pool Network20
+network 192.168.20.0 255.255.255.0
+default-router 192.168.20.1
+exit
+ip dhcp pool Network30
+network 192.168.30.0 255.255.255.0
+default-router 192.168.30.1
+exit
+ip dhcp pool Network40
+network 192.168.40.0 255.255.255.0
+default-router 192.168.40.1
+option 150 ip 192.168.100.1
+exit
+ip dhcp excluded-address 192.168.1.1
+ip dhcp excluded-address 192.168.1.2
+ip dhcp excluded-address 192.168.1.3
+ip dhcp excluded-address 192.168.1.4
+ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.20.1
+ip dhcp excluded-address 192.168.30.1
+ip dhcp excluded-address 192.168.40.1
+
+// Routing and Interface Configuration 
+------------------------
+[SW1]:
+ena
+conf t
+ip routing
+interface gig 1/0/7
+no switchport
+ip add 192.168.100.2 255.255.255.0
+exit
+ip route 0.0.0.0 0.0.0.0 192.168.100.1
+
+// Router Configuration
+----------------------------
+[R1]:
+ena
+conf t
+int fa0/0
+ip add 192.168.100.1 255.255.255.0
+no shut
+exit
+telephony-service 
+max-ephones 4
+max-dn 4
+ip source-address 192.168.100.1 port 2000
+auto assign 1 to 4
+exit
+ephone-dn 1 
+number 1001
+ephone-dn 2
+number 1002
+ephone-dn 3
+number 1003
+ephone-dn 4
+number 1004
+exit
+ip route 192.168.1.0 255.255.255.0 192.168.100.2
+ip route 192.168.10.0 255.255.255.0 192.168.100.2
+ip route 192.168.30.0 255.255.255.0 192.168.100.2
+ip route 192.168.20.0 255.255.255.0 192.168.100.2
+ip route 192.168.40.0 255.255.255.0 192.168.100.2
+exit
+
+
+// EtherChannel Configuration
+--------------------------
+[SW1]:
+enable
+conf t
+interface range gig 1/0/5 , gig 1/0/6
+channel-protocol pagp
+channel-group 1 mode desirable
+exit
+interface range gig 1/0/1 , gig 1/0/2
+channel-protocol pagp
+channel-group 2 mode desirable
+exit
+interface range gig 1/0/3 , gig 1/0/4
+channel-protocol pagp
+channel-group 3 mode desirable
+end
+
+[SW2] :
+enable
+conf t
+interface range gig 1/0/1 , gig 1/0/2
+channel-protocol pagp
+channel-group 1 mode auto
+end
+
+[SW3] :
+enable
+conf t
+interface range gig 0/1 , gig 0/2
+channel-protocol pagp
+channel-group 2 mode auto
+end
+
+[SW4] :
+enable
+conf t
+interface range gig 0/1 , gig 0/2
+channel-protocol pagp
+channel-group 3 mode auto
+end
+
+
+// Default Gateway Configuration
+------------------------
+[SW2, SW3, SW4]
+enable
+conf t
+ip default-gateway 192.168.1.1
+
+// Telnet and SSH Cofiguration
+------------------------
+[All Devices]
+enable
+conf t
+enable secret cisco
+username admin password 123
+ip domain-name everestacademy.in
+crypto key generate rsa
+1024
+line vty 0 4
+transport input all
+login local
+end
+
+
+
+
+
