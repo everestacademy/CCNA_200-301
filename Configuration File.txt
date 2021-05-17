@@ -1,0 +1,95 @@
+[R1]
+enable 
+conf t
+int fa0/0
+ip add 192.168.1.1 255.255.255.0
+no shut
+exit
+int se0/0/0
+ip add 200.1.1.1 255.255.255.252
+no shut
+end
+
+[R2]
+enable
+conf t
+int se0/0/0
+ip add 200.1.1.2 255.255.255.252
+no shut
+exit
+int se0/0/1
+ip add 200.1.1.5 255.255.255.252
+no shut
+end
+
+[R3]
+enable
+conf t
+int fa0/0
+ip add 192.168.2.1 255.255.255.0
+no shut
+exit
+int se0/0/0
+ip add 200.1.1.6 255.255.255.252
+no shut
+end
+--------------------------------------
+// RIP Configuration
+
+[R1]
+enable 
+conf t
+router rip
+network 192.168.1.0
+network 200.1.1.0
+end
+
+[R2]
+enable
+conf t
+router rip
+network 200.1.1.0
+end
+
+[R3]
+enable
+conf t
+router rip
+network 200.1.1.0
+network 192.168.2.0
+end
+
+----------------------------
+// DHCP Server
+
+
+[R1]
+enable 
+conf t
+ip dhcp pool NetworkA
+network 192.168.1.0 255.255.255.0
+default-router 192.168.1.1
+end
+
+
+
+[R3]
+enable 
+conf t
+ip dhcp pool NetworkB
+network 192.168.2.0 255.255.255.0
+default-router 192.168.2.1
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
