@@ -1,0 +1,46 @@
+[R1]
+------
+enable
+configure terminal
+interface fastethernet 0/0
+ip address 192.168.1.1  255.255.255.0
+no shutdown
+exit
+interface serial 0/0/0
+ip address 200.1.1.1  255.255.255.252
+no shutdown
+exit
+router ospf 1
+router-id 1.1.1.1
+network 192.168.1.0  0.0.0.255  area 0
+network 200.1.1.0       0.0.0.3      area 0
+end
+
+[R2]
+------
+enable
+configure terminal
+interface fastethernet 0/0
+ip address 192.168.2.1  255.255.255.0
+no shutdown
+exit
+interface serial 0/0/0
+ip address 200.1.1.2  255.255.255.252
+no shutdown
+exit
+router ospf 1
+router-id 2.2.2.2
+network 192.168.2.0  0.0.0.255  area 0
+network 200.1.1.0       0.0.0.3      area 0
+end
+-----------------
+[Verification Commands]
+show ip protocols 
+show ip ospf neighbor 
+show ip ospf interface
+show ip  route ospf 
+show ip ospf database router 
+---------------------
+
+
+
