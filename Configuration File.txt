@@ -1,0 +1,170 @@
+[SW1]
+-------------------
+ena
+conf t
+vtp domain LAN
+vtp mode server
+vtp password vtp123
+vlan 10
+exit
+vlan 20
+exit
+
+interface range Gig0/1 - 2
+switchport trunk encapsulation dot1q
+switchport mode trunk
+exit
+
+interface vlan 1
+ip address 192.168.1.1 255.255.255.0
+no shut
+exit
+interface vlan 10
+ip address 192.168.10.1 255.255.255.0
+no shut
+exit
+interface vlan 20
+ip address 192.168.20.1 255.255.255.0
+no shut
+exit
+interface fa0/1
+no switchport
+ip add 192.168.2.2 255.255.255.0
+no shut
+exit
+
+interface vlan 10
+ip helper-address 192.168.2.1
+exit
+interface vlan 20
+ip helper-address 192.168.2.1
+end
+-------------------------------
+[SW2]
+ena
+conf t
+vtp domain LAN
+vtp mode client
+vtp password vtp123
+
+int Giga0/1
+switchport mode trunk
+exit
+
+interface fa0/1
+switchport mode access
+switchport access vlan 10
+exit
+interface fa0/2
+switchport mode access
+switchport access vlan 20
+exit
+
+interface vlan 1 
+ip address 192.168.1.2 255.255.255.0
+no shut
+end
+---------------------------
+[SW3]
+ena
+conf t
+vtp domain LAN
+vtp mode client
+vtp password vtp123
+
+int Giga0/2
+switchport mode trunk
+exit
+
+interface fa0/1
+switchport mode access
+switchport access vlan 10
+exit
+interface fa0/2
+switchport mode access
+switchport access vlan 20
+exit
+
+interface vlan 1 
+ip address 192.168.1.3 255.255.255.0
+no shut
+end
+
+---------------------------
+[R1]
+enable
+conf t
+interface fa0/1
+ip address 192.168.2.1 255.255.255.0
+no shut
+int serial 0/0/0
+ip address 200.1.1.1 255.255.255.252
+no shut
+exit 
+
+
+ip dhcp pool Network10
+network 192.168.10.0 255.255.255.0
+default-router 192.168.10.1
+dns-server 8.8.8.8
+exit
+ip dhcp pool Network20
+network 192.168.20.0 255.255.255.0
+default-router 192.168.20.1
+dns-server 8.8.8.8
+exit
+ip dhcp excluded-address 192.168.10.1
+ip dhcp excluded-address 192.168.20.1
+end
+
+
+
+
+
+-----------------
+[Internet_Router]
+ena
+conf t
+interface se0/0/0
+ip address 200.1.1.2 255.255.255.252
+no shut
+exit
+ip route 0.0.0.0 0.0.0.0 200.1.1.1
+end
+
+
+
+
+
+
+
+----------------------------------------
+// OSPF Configuration
+[SW1]
+enable
+conf t
+ip routing
+router ospf 1
+router-id 2.2.2.2
+network 192.168.1.0 0.0.0.255 area 0
+network 192.168.2.0 0.0.0.255 area 0
+network 192.168.10.0 0.0.0.255 area 0
+network 192.168.20.0 0.0.0.255 area 0
+end
+---------------------------
+// OSPF Configuration
+[R1]
+enable
+conf t
+router ospf 1
+router-id 1.1.1.1
+network 192.168.2.0 0.0.0.255 area 0
+exit
+ip route 0.0.0.0 0.0.0.0 200.1.1.2
+router ospf 1
+default-information originate
+
+
+
+
+
