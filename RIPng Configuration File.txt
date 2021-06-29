@@ -1,0 +1,69 @@
+[R1]
+------
+enable
+conf t
+ipv6 unicast-routing
+interface GigabitEthernet 0/0
+ipv6 address 2001:A:A:1::1/64 
+no shutdown
+exit
+interface Serial 0/0/0
+ipv6 address 2001:A:A:2::1/64
+no shutdown
+exit
+
+[R2]
+-----
+enable
+conf t
+ipv6 unicast-routing
+interface GigabitEthernet 0/0
+ipv6 address 2001:A:A:3::1/64 
+no shutdown
+exit
+interface Serial 0/0/0
+ipv6 address 2001:A:A:2::2/64
+no shutdown
+end
+
+[R1, R2]
+-----
+enable
+conf t
+ipv6 router rip process1
+exit
+interface gig0/0
+ipv6 rip process1 enable
+exit
+interface se0/0/0
+ipv6 rip process1 enable
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
