@@ -1,0 +1,91 @@
+[R1]
+------
+enable
+conf t
+ipv6 unicast-routing
+interface GigabitEthernet 0/0
+ipv6 address 2001:A:A:1::1/64 
+no shutdown
+exit
+interface Serial 0/0/0
+ipv6 address 2001:A:A:2::1/64
+no shutdown
+exit
+
+[R2]
+-----
+enable
+conf t
+ipv6 unicast-routing
+interface GigabitEthernet 0/0
+ipv6 address 2001:A:A:3::1/64 
+no shutdown
+exit
+interface Serial 0/0/0
+ipv6 address 2001:A:A:2::2/64
+no shutdown
+end
+
+[R1]
+-----
+enable
+conf t
+ipv6 router ospf 1
+router-id 1.1.1.1
+exit
+interface GigabitEthernet 0/0
+ipv6 ospf 1 area 0
+exit
+interface Serial 0/0/0
+ipv6 ospf 1 area 0
+end
+
+
+[R2]
+-----
+enable
+conf t
+ipv6 router ospf 1
+router-id 2.2.2.2
+exit
+interface GigabitEthernet 0/0
+ipv6 ospf 1 area 0
+exit
+interface Serial 0/0/0
+ipv6 ospf 1 area 0
+end
+
+
+
+
+show ipv6 route ospf
+show ipv6 ospf database
+show ipv6 protocols
+show ipv6 interface
+show ipv6 ospf neighbor
+show ipv6 ospf interface
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
