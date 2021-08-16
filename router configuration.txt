@@ -1,0 +1,13 @@
+enable
+configure terminal
+access-list 100 deny udp 192.168.1.2 0.0.0.0 192.168.2.2 0.0.0.0 eq 53
+access-list 100 permit udp 192.168.1.0 0.0.0.255 192.168.2.2 0.0.0.0 eq 53
+access-list 100 permit tcp 192.168.1.0 0.0.0.255 192.168.2.2 0.0.0.0 eq 80
+access-list 100 deny ip any any
+interface gig0/0
+ip access-group 100 in
+exit
+---------------------------------
+
+
+
