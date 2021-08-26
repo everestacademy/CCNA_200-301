@@ -1,0 +1,41 @@
+configure terminal
+interface GigabitEthernet1/1
+ ip address 192.168.100.1 255.255.255.0
+ nameif inside
+ security-level 100
+ no shutdown
+interface GigabitEthernet1/2
+ ip address 192.168.50.1 255.255.255.0
+ nameif dmz
+ security-level 50
+ no shutdown
+interface GigabitEthernet1/3
+ ip address 192.168.0.1 255.255.255.0
+ nameif outside
+ security-level 0
+ no shutdown
+end
+
+----------------------
+show route
+show ip address
+show interface ip brief
+----------------------------
+conf t
+class-map inspection_default
+ match default-inspection-traffic
+!
+policy-map global_policy
+ class inspection_default
+  inspect dns 
+  inspect ftp 
+  inspect http 
+  inspect icmp 
+  inspect tftp 
+!
+service-policy global_policy global
+
+access-list outside-to-dmz permit tcp any host 192.168.50.3 eq www
+access-group outside-to-dmz in interface outside 
+
+
