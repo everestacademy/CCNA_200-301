@@ -1,0 +1,43 @@
+enable
+conf t
+interface FastEthernet0/1
+switchport mode access
+switchport port-security
+switchport port-security mac-address 0200.1111.1111
+!
+interface FastEthernet0/2
+switchport mode access
+switchport port-security
+switchport port-security mac-address sticky
+!
+interface FastEthernet0/3
+switchport mode access
+switchport port-security
+!
+interface FastEthernet0/4
+switchport trunk encapsulation dot1q
+switchport mode trunk
+switchport port-security
+switchport port-security maximum 8
+end
+
+
+
+
+
+
+
+
+---------------------------------
+show mac address-table static
+show mac address-table secure
+show interfaces Fa0/1 status   -----> err-disabled
+show interfaces status         -----> err-disabled
+show port-security
+show port-security interface fa0/1
+------------------------------
+conf t
+errdisable recovery cause psecure-violation
+errdisable recovery interval seconds
+-------------------------
+clear port-security -----------
