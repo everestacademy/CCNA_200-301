@@ -1,0 +1,34 @@
+[R1]
+----
+enable
+conf t
+interface gig0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+ip dhcp pool NetworkA
+network 192.168.1.0 255.255.255.0
+default-router 192.168.1.1
+dns-server 8.8.8.8
+exit
+ip dhcp excluded-address 192.168.1.1
+end
+------------------------------
+[SW1]
+-----
+enable
+conf t
+ip dhcp snooping
+ip dhcp snooping vlan 1
+no ip dhcp snooping information option
+interface Fa0/1
+ip dhcp snooping trust
+exit
+interface Fa0/2
+ip dhcp snooping limit rate 10
+end
+
+----------------------------------
+show ip dhcp snooping binding
+show ip dhcp snooping
+
