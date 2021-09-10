@@ -1,0 +1,21 @@
+[R2]
+------
+enable
+conf t
+!--------------------
+ip route 0.0.0.0 0.0.0.0 200.1.1.1
+!--------------------
+interface Gig0/0
+ip nat inside
+exit
+
+interface Gig0/1
+ip nat outside
+exit
+!---------------------
+ip nat inside source static 10.0.0.2 200.1.1.2
+end
+!----------------------
+show ip nat translation
+debug ip nat
+
