@@ -1,0 +1,69 @@
+[R1]
+enable
+conf t
+ip dhcp pool its
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ option 150 ip 192.168.1.1
+exit
+ip dhcp excluded-address 192.168.1.1
+interface FastEthernet0/0
+ ip address 192.168.1.1 255.255.255.0
+ no shut
+!
+interface serial 0/0/0
+ ip address 200.1.1.1 255.255.255.0
+ no shut
+!
+ip route 192.168.2.0 255.255.255.0  200.1.1.2
+!
+dial-peer voice 1 voip
+ destination-pattern 2...
+ session target ipv4:200.1.1.2
+!
+telephony-service
+ max-ephones 1
+ max-dn 1
+ ip source-address 192.168.1.1 port 2000
+ auto assign 1 to 1
+!
+ephone-dn 1
+ number 1001
+!
+
+
+
+-----------------------
+[R2]
+enable
+conf t
+ip dhcp pool its
+ network 192.168.2.0 255.255.255.0
+ default-router 192.168.2.1
+ option 150 ip 192.168.2.1
+exit
+ip dhcp excluded-address 192.168.2.1
+interface FastEthernet0/0
+ ip address 192.168.2.1 255.255.255.0
+ no shut
+!
+interface serial 0/0/0
+ ip address 200.1.1.2 255.255.255.0
+ no shut
+!
+ip route 192.168.1.0 255.255.255.0  200.1.1.1
+!
+dial-peer voice 1 voip
+ destination-pattern 1...
+ session target ipv4:200.1.1.1
+!
+telephony-service
+ max-ephones 1
+ max-dn 1
+ ip source-address 192.168.2.1 port 2000
+ auto assign 1 to 1
+!
+ephone-dn 1
+ number 2001
+!
+
